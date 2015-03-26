@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:data-mapper="http://www.mulesoft.org/schema/mule/ee/data-mapper" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/data-mapper http://www.mulesoft.org/schema/mule/ee/data-mapper/current/mule-data-mapper.xsd">
+
+	
+	<db:generic-config name="PostgreSQLConnector" url="${db.fileregistry.jdbc.url}"
+		driverClassName="${db.fileregistry.jdbc.driverclass}" doc:name="Generic Database Configuration" />
+    <data-mapper:config name="List_Map__To_XML" transformationGraphPath="list_map__to_xml.grf" doc:name="List_Map__To_XML"/>
+    <flow name="dbconntestFlow">
+        <poll doc:name="Poll">
+            <db:select config-ref="PostgreSQLConnector" doc:name="Database">
+                <db:parameterized-query><![CDATA[SELECT now();]]></db:parameterized-query>
+            </db:select>
+        </poll>
+        <data-mapper:transform config-ref="List_Map__To_XML" doc:name="List&lt;Map&gt; To XML"/>
+        <logger message="Query output:#[payload]" level="INFO" doc:name="Logger"/>
+        
+    </flow>
+		
+		
+</mule>
